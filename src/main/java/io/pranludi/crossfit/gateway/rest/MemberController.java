@@ -32,24 +32,16 @@ public class MemberController {
     // HTTP 요청 -> gRPC 호출 -> 원격 gRPC 서버 -> 응답
     @PostMapping("/saveMember")
     public ResponseEntity<MemberResponse> saveMember(@RequestBody MemberRequest req) {
-        try {
-            SignUpResponse response = grpcMemberClient.saveMember(req.id(), req.password(), req.name(), req.email(), req.phoneNumber(), MemberGradeDTO.valueOf(req.grade()));
-            MemberResponse memberResponse = GrpcMapper.INSTANCE.memberEntityToProto(response.getMember());
-            return ResponseEntity.ok(memberResponse);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        SignUpResponse response = grpcMemberClient.saveMember(req.id(), req.password(), req.name(), req.email(), req.phoneNumber(), MemberGradeDTO.valueOf(req.grade()));
+        MemberResponse memberResponse = GrpcMapper.INSTANCE.memberEntityToProto(response.getMember());
+        return ResponseEntity.ok(memberResponse);
     }
 
     @GetMapping("/getMember")
-    public ResponseEntity<MemberResponse> saveMember(@RequestParam String id) {
-        try {
-            GetMemberResponse response = grpcMemberClient.getMemberById(id);
-            MemberResponse memberResponse = GrpcMapper.INSTANCE.memberEntityToProto(response.getMember());
-            return ResponseEntity.ok(memberResponse);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<MemberResponse> getMember(@RequestParam String id) {
+        GetMemberResponse response = grpcMemberClient.getMemberById(id);
+        MemberResponse memberResponse = GrpcMapper.INSTANCE.memberEntityToProto(response.getMember());
+        return ResponseEntity.ok(memberResponse);
     }
 
 }
