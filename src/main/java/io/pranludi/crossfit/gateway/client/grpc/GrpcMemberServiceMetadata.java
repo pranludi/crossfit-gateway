@@ -1,4 +1,4 @@
-package io.pranludi.crossfit.gateway.client;
+package io.pranludi.crossfit.gateway.client.grpc;
 
 import io.grpc.CallCredentials;
 import io.grpc.Metadata;
