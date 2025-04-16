@@ -2,7 +2,9 @@ package io.pranludi.crossfit.gateway.client.grpc;
 
 import io.grpc.Channel;
 import io.grpc.StatusRuntimeException;
-import io.pranludi.crossfit.gateway.client.MemberIdMetadata;
+import io.pranludi.crossfit.gateway.client.GrpcMemberServiceMetadata;
+import io.pranludi.crossfit.gateway.common.ServerTokenUtil;
+import io.pranludi.crossfit.gateway.domain.server.ServerType;
 import io.pranludi.crossfit.member.protobuf.GetMemberRequest;
 import io.pranludi.crossfit.member.protobuf.GetMemberResponse;
 import io.pranludi.crossfit.member.protobuf.MemberGradeDTO;
@@ -19,11 +21,16 @@ import org.springframework.stereotype.Component;
 public class GrpcMemberClient {
 
     final Logger log = LoggerFactory.getLogger(GrpcMemberClient.class);
+    final ServerTokenUtil serverTokenUtil;
 
     @GrpcClient("member-service")
-    private Channel channel;
+    Channel channel;
 
     MemberServiceGrpc.MemberServiceBlockingStub stub;
+
+    public GrpcMemberClient(ServerTokenUtil serverTokenUtil) {
+        this.serverTokenUtil = serverTokenUtil;
+    }
 
     @PostConstruct
     public void init() {
@@ -47,8 +54,10 @@ public class GrpcMemberClient {
                 .setGrade(grade)
                 .build();
 
+            var token = serverTokenUtil.generateServerToken(ServerType.MEMBER_SERVICE, "server_id");
+
             return stub
-                .withCallCredentials(new MemberIdMetadata(memberId))
+                .withCallCredentials(new GrpcMemberServiceMetadata(memberId, token))
                 .signUp(req);
         } catch (StatusRuntimeException e) {
             log.error("gRPC 호출 실패 - 상태: {}, 설명: {}, 원인: {}",
@@ -63,8 +72,9 @@ public class GrpcMemberClient {
     public GetMemberResponse getMemberById(String memberId) {
         try {
             GetMemberRequest req = GetMemberRequest.newBuilder().build();
+            var token = serverTokenUtil.generateServerToken(ServerType.MEMBER_SERVICE, "server_id");
             return stub
-                .withCallCredentials(new MemberIdMetadata(memberId))
+                .withCallCredentials(new GrpcMemberServiceMetadata(memberId, token))
                 .getMember(req);
         } catch (StatusRuntimeException e) {
             log.error("gRPC 호출 실패 - 상태: {}, 설명: {}, 원인: {}",
