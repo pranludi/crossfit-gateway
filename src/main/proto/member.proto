@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package io.pranludi.crossfit.member.protobuf;
+
+option java_package = "io.pranludi.crossfit.member.protobuf";
+option java_multiple_files = true;
+
+import "member-entities.proto";
+
+service MemberService {
+  rpc SignUp (SignUpRequest) returns (SignUpResponse) {}
+  rpc GetMember (GetMemberRequest) returns (GetMemberResponse) {}
+}
+
+message SignUpRequest {
+  string password = 1;
+  string name = 2;
+  string email = 3;
+  string phone_number = 4;
+  MemberGradeDTO grade = 5;
+}
+
+message SignUpResponse {
+  MemberDTO member = 1;
+}
+
+message GetMemberRequest {
+}
+
+message GetMemberResponse {
+  MemberDTO member = 1;
+}

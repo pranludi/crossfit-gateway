@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package io.pranludi.crossfit.member.protobuf;
+
+option java_package = "io.pranludi.crossfit.member.protobuf";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+message MemberDTO {
+  string id = 1;
+  string password = 2;
+  string name = 3;
+  string email = 4;
+  string phone_number = 5;
+  MemberGradeDTO grade = 6;
+  google.protobuf.Timestamp last_paid_at = 7;
+}
+
+enum MemberGradeDTO {
+  NONE = 0;
+  NORMAL = 1;
+  COACH = 2;
+}
