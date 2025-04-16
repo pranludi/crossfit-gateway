@@ -1,11 +1,12 @@
 package io.pranludi.crossfit.gateway.rest;
 
 import io.pranludi.crossfit.gateway.client.grpc.GrpcMemberClient;
+import io.pranludi.crossfit.gateway.rest.dto.MemberRequest;
+import io.pranludi.crossfit.gateway.rest.dto.MemberResponse;
+import io.pranludi.crossfit.gateway.rest.mapper.GrpcMapper;
 import io.pranludi.crossfit.member.protobuf.GetMemberResponse;
-import io.pranludi.crossfit.member.protobuf.MemberDTO;
 import io.pranludi.crossfit.member.protobuf.MemberGradeDTO;
 import io.pranludi.crossfit.member.protobuf.SignUpResponse;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -30,28 +31,22 @@ public class MemberController {
 
     // HTTP 요청 -> gRPC 호출 -> 원격 gRPC 서버 -> 응답
     @PostMapping("/saveMember")
-    public ResponseEntity<MemberDTO> saveMember(
-        @RequestBody Map<String, String> body
-    ) {
-        // todo mapstruct
-        String id = body.get("id");
-        String password = body.get("password");
-        String name = body.get("name");
-        String email = body.get("email");
-        String grade = body.get("grade");
+    public ResponseEntity<MemberResponse> saveMember(@RequestBody MemberRequest req) {
         try {
-            SignUpResponse response = grpcMemberClient.saveMember(id, password, name, email, MemberGradeDTO.valueOf(grade));
-            return ResponseEntity.ok(response.getMember());
+            SignUpResponse response = grpcMemberClient.saveMember(req.id(), req.password(), req.name(), req.email(), req.phoneNumber(), MemberGradeDTO.valueOf(req.grade()));
+            MemberResponse memberResponse = GrpcMapper.INSTANCE.memberEntityToProto(response.getMember());
+            return ResponseEntity.ok(memberResponse);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping("/getMember")
-    public ResponseEntity<MemberDTO> saveMember(@RequestParam String id) {
+    public ResponseEntity<MemberResponse> saveMember(@RequestParam String id) {
         try {
             GetMemberResponse response = grpcMemberClient.getMemberById(id);
-            return ResponseEntity.ok(response.getMember());
+            MemberResponse memberResponse = GrpcMapper.INSTANCE.memberEntityToProto(response.getMember());
+            return ResponseEntity.ok(memberResponse);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

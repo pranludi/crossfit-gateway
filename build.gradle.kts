@@ -16,6 +16,12 @@ java {
   }
 }
 
+configurations {
+  compileOnly {
+    extendsFrom(configurations.annotationProcessor.get())
+  }
+}
+
 repositories {
   mavenCentral()
 }
@@ -33,8 +39,13 @@ dependencies {
   implementation("io.grpc:grpc-netty-shaded:1.66.0")
   implementation("io.grpc:grpc-protobuf:1.66.0")
   implementation("io.grpc:grpc-stub:1.66.0")
-	implementation("javax.annotation:javax.annotation-api:1.3.2")
+  implementation("javax.annotation:javax.annotation-api:1.3.2")
 
+  // mapstruct
+  implementation("org.mapstruct:mapstruct:1.5.5.Final")
+  annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
+  // jwt
   implementation("io.jsonwebtoken:jjwt-api:0.12.6")
   runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
   runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")

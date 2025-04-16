@@ -2,7 +2,6 @@ package io.pranludi.crossfit.gateway.client.grpc;
 
 import io.grpc.Channel;
 import io.grpc.StatusRuntimeException;
-import io.pranludi.crossfit.gateway.client.GrpcMemberServiceMetadata;
 import io.pranludi.crossfit.gateway.common.ServerTokenUtil;
 import io.pranludi.crossfit.gateway.domain.server.ServerType;
 import io.pranludi.crossfit.member.protobuf.GetMemberRequest;
@@ -43,14 +42,15 @@ public class GrpcMemberClient {
         String password,
         String name,
         String email,
+        String phoneNumber,
         MemberGradeDTO grade
     ) {
         try {
-            // todo mapstruct
             SignUpRequest req = SignUpRequest.newBuilder()
                 .setPassword(password)
                 .setName(name)
                 .setEmail(email)
+                .setPhoneNumber(phoneNumber)
                 .setGrade(grade)
                 .build();
 
