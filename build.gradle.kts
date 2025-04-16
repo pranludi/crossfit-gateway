@@ -35,6 +35,10 @@ dependencies {
   implementation("io.grpc:grpc-stub:1.66.0")
 	implementation("javax.annotation:javax.annotation-api:1.3.2")
 
+  implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+  runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+  runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
   runtimeOnly("com.h2database:h2")
   runtimeOnly("org.postgresql:postgresql")
   testImplementation("org.springframework.boot:spring-boot-starter-test")

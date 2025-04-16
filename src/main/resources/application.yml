@@ -1,3 +1,8 @@
+app:
+  server:
+    type: GATEWAY_SERVICE
+    id: gateway-service-1
+
 server:
   port: 8080
 
@@ -18,3 +23,6 @@ grpc:
     branch-service:
       address: static://localhost:8083
       negotiationType: PLAINTEXT
+
+jwt:
+  secret-key: "rYfed5F12iViHmbB7ZufrxIR6MNLG67+4+b6+DhqcRJuFVe7/KxhIb4necxKaCDN"
