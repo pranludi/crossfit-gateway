@@ -1,9 +1,9 @@
 package io.pranludi.crossfit.gateway.rest.dto;
 
-public record MemberResponse(
+public record BranchResponse(
     String code,
     String message,
-    MemberResult result
+    BranchResult result
 ) {
 
 }
