@@ -20,6 +20,9 @@
 - Branch
   - 지점 가입, 조회 처리, ...
   - https://github.com/pranludi/crossfit-branch
+- Protocol
+  - protobuf 파일들
+  - git submodule add git@github.com:pranludi/crossfit-protocol.git
 
 ### 대략 구성
 ![crossfit-service.png](docs/crossfit-service.png)
