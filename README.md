@@ -29,6 +29,7 @@
 - local, qa, prod 환경 구분 및 DB 분리
 - grpc response 구조 변경( circuit breaker 대응 용 )
 - 테스트 추가
+- eureka 같은 편의 기능 추가
 - docker 기반으로 테스트 할 수 있도록 docker compose 구성
 - docker 에서 발생하는 로그 수집 및 kafka 으로 전달하도록 구성 
 - member 와 branch 의 로직 추가 ?
