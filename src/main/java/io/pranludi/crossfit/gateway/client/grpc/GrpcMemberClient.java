@@ -29,7 +29,7 @@ public class GrpcMemberClient {
     final ServerTokenUtil serverTokenUtil;
     final CircuitBreakerRegistry circuitBreakerRegistry;
 
-    @GrpcClient("member-service")
+    @GrpcClient("member-service-url")
     Channel channel;
 
     CircuitBreaker grpcCircuitBreaker;

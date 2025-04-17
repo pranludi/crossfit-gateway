@@ -1,8 +1,12 @@
 version: '3.8'
-name: kafka-docker
+name: crossfit-docker
 
 networks:
   kafka_network:
+  postgres:
+    driver: bridge
+  zipkin:
+    driver: bridge
 
 volumes:
   Kafka00:
@@ -11,8 +15,46 @@ volumes:
     driver: local
   Kafka02:
     driver: local
+  postgres:
+  pgadmin:
 
 services:
+  postgresql:
+    container_name: postgresql
+    image: postgres
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - zipkin
   Kafka00Service:
     image: bitnami/kafka:3.5.1-debian-11-r44
     restart: unless-stopped

@@ -29,15 +29,21 @@ repositories {
 extra["springCloudVersion"] = "2024.0.1"
 
 dependencies {
+  implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("com.google.protobuf:protobuf-java:4.28.2")
   implementation("com.google.protobuf:protobuf-java-util:4.28.2")
 
+  // cloud
   implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+  implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+  implementation("org.springframework.cloud:spring-cloud-starter-config")
+  implementation("org.springframework.cloud:spring-cloud-starter-gateway")
 
   implementation("net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE")
   implementation("net.devh:grpc-spring-boot-starter:3.1.0.RELEASE")
+  implementation("io.grpc:grpc-netty:1.66.0")
   implementation("io.grpc:grpc-netty-shaded:1.66.0")
   implementation("io.grpc:grpc-protobuf:1.66.0")
   implementation("io.grpc:grpc-stub:1.66.0")
