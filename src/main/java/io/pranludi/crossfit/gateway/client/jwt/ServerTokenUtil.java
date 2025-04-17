@@ -1,4 +1,4 @@
-package io.pranludi.crossfit.gateway.common;
+package io.pranludi.crossfit.gateway.client.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
