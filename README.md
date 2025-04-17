@@ -25,14 +25,14 @@
 ![crossfit-service.png](docs/crossfit-service.png)
 
 ### todo ...
-1. protobuf 파일 submodule(repository)
-2. grpc response 구조 변경( circuit breaker 대응 용 )
-3. eureka
-4. local, qa, prod 환경 구분 및 DB 분리
-5. 테스트 추가
-6. docker 기반으로 테스트 할 수 있도록 docker compose 구성
-7. ocker 에서 발생하는 로그 수집 및 kafka 으로 전달하도록 구성
-8. kafka stream 을 이용해서 실시간 로그 분석 ?
-9. elasticsearch(opensearch) / kibana ?
-10. member 와 branch 의 로직 추가 ?
-11. board 게시판 서비스 추가 ?
+1. [protobuf 파일 submodule(repository)](https://github.com/pranludi/crossfit-gateway/issues/2)
+2. [grpc response 구조 변경( circuit breaker 대응 용 )](https://github.com/pranludi/crossfit-gateway/pull/7)
+3. [eureka](https://github.com/pranludi/crossfit-gateway/pull/10)
+4. [local, qa, prod 환경 구분 및 DB 분리](https://github.com/pranludi/crossfit-gateway/pull/8)
+5. [테스트 추가](https://github.com/pranludi/crossfit-gateway/pull/9)
+6. [docker 기반으로 테스트 할 수 있도록 docker compose 구성](https://github.com/pranludi/crossfit-gateway/pull/11)
+7. [docker 에서 발생하는 로그 수집 및 kafka 으로 전달하도록 구성](https://github.com/pranludi/crossfit-gateway/pull/12)
+8. [kafka stream 을 이용해서 실시간 로그 분석 ?](https://github.com/pranludi/crossfit-gateway/pull/15)
+9. [elasticsearch(opensearch) / kibana ?](https://github.com/pranludi/crossfit-gateway/pull/16)
+10. [member 와 branch 의 로직 추가 ?](https://github.com/pranludi/crossfit-gateway/pull/13)
+11. [board 게시판 서비스 추가 ?](https://github.com/pranludi/crossfit-gateway/pull/14)
