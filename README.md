@@ -28,7 +28,7 @@
 ![crossfit-service.png](docs/crossfit-service.png)
 
 ### todo ...
-1. [protobuf 파일 submodule(repository)](https://github.com/pranludi/crossfit-gateway/issues/2)
+~~1. [protobuf 파일 submodule(repository)](https://github.com/pranludi/crossfit-gateway/issues/2)~~
 2. [grpc response 구조 변경( circuit breaker 대응 용 )](https://github.com/pranludi/crossfit-gateway/pull/7)
 3. [eureka](https://github.com/pranludi/crossfit-gateway/pull/10)
 4. [local, qa, prod 환경 구분 및 DB 분리](https://github.com/pranludi/crossfit-gateway/pull/8)
