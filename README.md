@@ -13,10 +13,13 @@
 ### MSA 형태로 구현
 - Gateway
   - 요청을 받아서 각 서비스에게 처리 요청 및 집계 처리
+  - https://github.com/pranludi/crossfit-gateway
 - Member
   - 회원 가입, 조회 처리, ...
+  - https://github.com/pranludi/crossfit-member
 - Branch
   - 지점 가입, 조회 처리, ...
+  - https://github.com/pranludi/crossfit-branch
 
 ### 대략 구성
 ![crossfit-service.png](docs/crossfit-service.png)
