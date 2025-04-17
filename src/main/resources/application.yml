@@ -24,5 +24,19 @@ grpc:
       address: static://localhost:8083
       negotiationType: PLAINTEXT
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      member-service-circuit:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordExceptions:
+          - java.net.ConnectException
+          - java.lang.RuntimeException
+
 jwt:
   secret-key: "rYfed5F12iViHmbB7ZufrxIR6MNLG67+4+b6+DhqcRJuFVe7/KxhIb4necxKaCDN"

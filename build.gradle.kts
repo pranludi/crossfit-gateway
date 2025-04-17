@@ -26,13 +26,15 @@ repositories {
   mavenCentral()
 }
 
-extra["springGrpcVersion"] = "0.6.0"
+extra["springCloudVersion"] = "2024.0.1"
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("com.google.protobuf:protobuf-java:4.28.2")
   implementation("com.google.protobuf:protobuf-java-util:4.28.2")
+
+  implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
 
   implementation("net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE")
   implementation("net.devh:grpc-spring-boot-starter:3.1.0.RELEASE")
@@ -50,11 +52,19 @@ dependencies {
   runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
   runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
+  implementation("io.vavr:vavr:0.10.6")
+
   runtimeOnly("com.h2database:h2")
   runtimeOnly("org.postgresql:postgresql")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.projectreactor:reactor-test")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+dependencyManagement {
+  imports {
+    mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+  }
 }
 
 protobuf {

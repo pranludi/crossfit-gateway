@@ -1,15 +1,20 @@
 package io.pranludi.crossfit.gateway.client.grpc;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.grpc.Channel;
 import io.grpc.StatusRuntimeException;
-import io.pranludi.crossfit.gateway.common.ServerTokenUtil;
+import io.pranludi.crossfit.gateway.client.jwt.ServerTokenUtil;
 import io.pranludi.crossfit.gateway.domain.server.ServerType;
 import io.pranludi.crossfit.member.protobuf.GetMemberRequest;
 import io.pranludi.crossfit.member.protobuf.GetMemberResponse;
+import io.pranludi.crossfit.member.protobuf.MemberDTO;
 import io.pranludi.crossfit.member.protobuf.MemberGradeDTO;
 import io.pranludi.crossfit.member.protobuf.MemberServiceGrpc;
 import io.pranludi.crossfit.member.protobuf.SignUpRequest;
 import io.pranludi.crossfit.member.protobuf.SignUpResponse;
+import io.vavr.control.Try;
+import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
@@ -21,18 +26,22 @@ public class GrpcMemberClient {
 
     final Logger log = LoggerFactory.getLogger(GrpcMemberClient.class);
     final ServerTokenUtil serverTokenUtil;
+    final CircuitBreakerRegistry circuitBreakerRegistry;
 
     @GrpcClient("member-service")
     Channel channel;
 
+    CircuitBreaker grpcCircuitBreaker;
     MemberServiceGrpc.MemberServiceBlockingStub stub;
 
-    public GrpcMemberClient(ServerTokenUtil serverTokenUtil) {
+    public GrpcMemberClient(CircuitBreakerRegistry circuitBreakerRegistry, ServerTokenUtil serverTokenUtil) {
+        this.circuitBreakerRegistry = circuitBreakerRegistry;
         this.serverTokenUtil = serverTokenUtil;
     }
 
     @PostConstruct
     public void init() {
+        grpcCircuitBreaker = circuitBreakerRegistry.circuitBreaker("member-service-circuit");
         stub = MemberServiceGrpc.newBlockingStub(channel);
     }
 
@@ -45,44 +54,85 @@ public class GrpcMemberClient {
         String phoneNumber,
         MemberGradeDTO grade
     ) {
-        try {
-            SignUpRequest req = SignUpRequest.newBuilder()
-                .setPassword(password)
-                .setName(name)
-                .setEmail(email)
-                .setPhoneNumber(phoneNumber)
-                .setGrade(grade)
+        Supplier<SignUpResponse> caller = () -> {
+            try {
+                SignUpRequest req = SignUpRequest.newBuilder()
+                    .setPassword(password)
+                    .setName(name)
+                    .setEmail(email)
+                    .setPhoneNumber(phoneNumber)
+                    .setGrade(grade)
+                    .build();
+
+                var token = serverTokenUtil.generateServerToken(ServerType.MEMBER_SERVICE, "server_id");
+                return stub
+                    .withCallCredentials(new GrpcMemberServiceMetadata(memberId, token))
+                    .signUp(req);
+            } catch (StatusRuntimeException e) {
+                log.error("[gRPC 호출 실패] 상태: {}, 설명: {}, 원인: {}",
+                    e.getStatus(),
+                    e.getStatus().getDescription(),
+                    e.getCause());
+                throw e;
+            }
+        };
+
+        Supplier<SignUpResponse> fallback = () -> {
+            log.error("[CircuitBreaker-Fallback] memberId : {}", memberId);
+            return SignUpResponse.newBuilder().setMember(
+                    MemberDTO.newBuilder()
+                        .setId(memberId).setName("Fallback member")
+                        .build()
+                )
                 .build();
+        };
 
-            var token = serverTokenUtil.generateServerToken(ServerType.MEMBER_SERVICE, "server_id");
-
-            return stub
-                .withCallCredentials(new GrpcMemberServiceMetadata(memberId, token))
-                .signUp(req);
-        } catch (StatusRuntimeException e) {
-            log.error("gRPC 호출 실패 - 상태: {}, 설명: {}, 원인: {}",
-                e.getStatus(),
-                e.getStatus().getDescription(),
-                e.getCause());
-            throw e;
-        }
+        return circuitBreakerDecoration(grpcCircuitBreaker, caller, fallback);
     }
 
     // 회원 ID로 회원 조회
     public GetMemberResponse getMemberById(String memberId) {
-        try {
-            GetMemberRequest req = GetMemberRequest.newBuilder().build();
-            var token = serverTokenUtil.generateServerToken(ServerType.MEMBER_SERVICE, "server_id");
-            return stub
-                .withCallCredentials(new GrpcMemberServiceMetadata(memberId, token))
-                .getMember(req);
-        } catch (StatusRuntimeException e) {
-            log.error("gRPC 호출 실패 - 상태: {}, 설명: {}, 원인: {}",
-                e.getStatus(),
-                e.getStatus().getDescription(),
-                e.getCause());
-            throw e;
-        }
+        Supplier<GetMemberResponse> caller = () -> {
+            try {
+                GetMemberRequest req = GetMemberRequest.newBuilder().build();
+                var token = serverTokenUtil.generateServerToken(ServerType.MEMBER_SERVICE, "server_id");
+                return stub
+                    .withCallCredentials(new GrpcMemberServiceMetadata(memberId, token))
+                    .getMember(req);
+            } catch (StatusRuntimeException e) {
+                log.error("[gRPC 호출 실패] 상태: {}, 설명: {}, 원인: {}",
+                    e.getStatus(),
+                    e.getStatus().getDescription(),
+                    e.getCause());
+                throw e;
+            }
+        };
+
+        Supplier<GetMemberResponse> fallback = () -> {
+            log.error("[CircuitBreaker-Fallback] memberId : {}", memberId);
+            return GetMemberResponse.newBuilder().setMember(
+                    MemberDTO.newBuilder()
+                        .setId(memberId).setName("Fallback member")
+                        .build()
+                )
+                .build();
+        };
+
+        return circuitBreakerDecoration(grpcCircuitBreaker, caller, fallback);
+    }
+
+    public static <T> T circuitBreakerDecoration(
+        CircuitBreaker grpcCircuitBreaker,
+        Supplier<T> call,
+        Supplier<T> fallback
+    ) {
+        Supplier<T> decoratedSupplier =
+            CircuitBreaker.decorateSupplier(grpcCircuitBreaker, () -> call.get()
+            );
+
+        return Try.ofSupplier(decoratedSupplier)
+            .recover(throwable -> fallback.get())
+            .get();
     }
 
 }
