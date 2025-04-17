@@ -25,15 +25,14 @@
 ![crossfit-service.png](docs/crossfit-service.png)
 
 ### todo ...
-- protobuf 파일 submodule(repository)
-- local, qa, prod 환경 구분 및 DB 분리
-- grpc response 구조 변경( circuit breaker 대응 용 )
-- 테스트 추가
-- eureka 같은 편의 기능 추가
-- docker 기반으로 테스트 할 수 있도록 docker compose 구성
-- docker 에서 발생하는 로그 수집 및 kafka 으로 전달하도록 구성 
-- member 와 branch 의 로직 추가 ?
-- board 게시판 서비스 추가 ?
-- kafka stream 을 이용해서 실시간 로그 분석 ?
-- elasticsearch(opensearch) / kibana ?
-
+1. protobuf 파일 submodule(repository)
+2. grpc response 구조 변경( circuit breaker 대응 용 )
+3. eureka
+4. local, qa, prod 환경 구분 및 DB 분리
+5. 테스트 추가
+6. docker 기반으로 테스트 할 수 있도록 docker compose 구성
+7. ocker 에서 발생하는 로그 수집 및 kafka 으로 전달하도록 구성
+8. kafka stream 을 이용해서 실시간 로그 분석 ?
+9. elasticsearch(opensearch) / kibana ?
+10. member 와 branch 의 로직 추가 ?
+11. board 게시판 서비스 추가 ?
