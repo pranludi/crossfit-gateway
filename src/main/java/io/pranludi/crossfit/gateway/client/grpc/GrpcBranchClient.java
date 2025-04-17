@@ -30,7 +30,7 @@ public class GrpcBranchClient {
     final ServerTokenUtil serverTokenUtil;
     final CircuitBreakerRegistry circuitBreakerRegistry;
 
-    @GrpcClient("branch-service")
+    @GrpcClient("branch-service-url")
     Channel channel;
 
     CircuitBreaker grpcCircuitBreaker;

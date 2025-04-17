@@ -1,3 +1,16 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    os:
+      enabled: true
+    java:
+      enabled: true
+    env:
+      enabled: true
+
 app:
   server:
     type: GATEWAY_SERVICE
@@ -11,18 +24,25 @@ spring:
     name: gateway
   main:
     allow-bean-definition-overriding: true
+  config:
+    import: optional:configserver:http://localhost:8888
+
+#grpc:
+#  client:
+#    default:
+#      address: static://localhost:50051
+#      negotiationType: PLAINTEXT
+#    member-service:
+#      address: static://localhost:8081
+#      negotiationType: PLAINTEXT
+#    branch-service:
+#      address: static://localhost:8083
+#      negotiationType: PLAINTEXT
 
 grpc:
   client:
-    default:
-      address: static://localhost:50051
-      negotiationType: PLAINTEXT
-    member-service:
-      address: static://localhost:8081
-      negotiationType: PLAINTEXT
-    branch-service:
-      address: static://localhost:8083
-      negotiationType: PLAINTEXT
+    GLOBAL:
+      negotiation-type: plaintext
 
 resilience4j:
   circuitbreaker:
