@@ -2,7 +2,7 @@ package io.pranludi.crossfit.gateway.rest.mapper;
 
 import com.google.protobuf.Timestamp;
 import io.pranludi.crossfit.gateway.rest.dto.MemberResponse;
-import io.pranludi.crossfit.member.protobuf.MemberDTO;
+import io.pranludi.crossfit.protobuf.MemberDTO;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import org.mapstruct.Mapper;

@@ -88,6 +88,14 @@ protobuf {
   }
 }
 
+sourceSets {
+  main {
+    proto {
+      srcDir("crossfit-protocol/protobuf")
+    }
+  }
+}
+
 tasks.withType<Test> {
   useJUnitPlatform()
 }
