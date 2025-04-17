@@ -1,19 +1,20 @@
 package io.pranludi.crossfit.gateway.client.grpc;
 
+import static io.pranludi.crossfit.gateway.client.grpc.GrpcUtil.circuitBreakerDecoration;
+
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.grpc.Channel;
 import io.grpc.StatusRuntimeException;
 import io.pranludi.crossfit.gateway.client.jwt.ServerTokenUtil;
 import io.pranludi.crossfit.gateway.domain.server.ServerType;
-import io.pranludi.crossfit.protobuf.MemberDTO;
 import io.pranludi.crossfit.protobuf.MemberGradeDTO;
+import io.pranludi.crossfit.protobuf.ResultCode;
 import io.pranludi.crossfit.protobuf.member.GetMemberRequest;
 import io.pranludi.crossfit.protobuf.member.GetMemberResponse;
 import io.pranludi.crossfit.protobuf.member.MemberServiceGrpc;
 import io.pranludi.crossfit.protobuf.member.SignUpRequest;
 import io.pranludi.crossfit.protobuf.member.SignUpResponse;
-import io.vavr.control.Try;
 import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -79,11 +80,9 @@ public class GrpcMemberClient {
 
         Supplier<SignUpResponse> fallback = () -> {
             log.error("[CircuitBreaker-Fallback] memberId : {}", memberId);
-            return SignUpResponse.newBuilder().setMember(
-                    MemberDTO.newBuilder()
-                        .setId(memberId).setName("Fallback member")
-                        .build()
-                )
+            return SignUpResponse.newBuilder()
+                .setCode(ResultCode.CIRCUIT_BREAKER)
+                .setMessage("[CircuitBreaker-Fallback]")
                 .build();
         };
 
@@ -110,29 +109,13 @@ public class GrpcMemberClient {
 
         Supplier<GetMemberResponse> fallback = () -> {
             log.error("[CircuitBreaker-Fallback] memberId : {}", memberId);
-            return GetMemberResponse.newBuilder().setMember(
-                    MemberDTO.newBuilder()
-                        .setId(memberId).setName("Fallback member")
-                        .build()
-                )
+            return GetMemberResponse.newBuilder()
+                .setCode(ResultCode.CIRCUIT_BREAKER)
+                .setMessage("[CircuitBreaker-Fallback]")
                 .build();
         };
 
         return circuitBreakerDecoration(grpcCircuitBreaker, caller, fallback);
-    }
-
-    public static <T> T circuitBreakerDecoration(
-        CircuitBreaker grpcCircuitBreaker,
-        Supplier<T> call,
-        Supplier<T> fallback
-    ) {
-        Supplier<T> decoratedSupplier =
-            CircuitBreaker.decorateSupplier(grpcCircuitBreaker, () -> call.get()
-            );
-
-        return Try.ofSupplier(decoratedSupplier)
-            .recover(throwable -> fallback.get())
-            .get();
     }
 
 }

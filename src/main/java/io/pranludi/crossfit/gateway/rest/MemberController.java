@@ -33,14 +33,22 @@ public class MemberController {
     @PostMapping("/saveMember")
     public ResponseEntity<MemberResponse> saveMember(@RequestBody MemberRequest req) {
         SignUpResponse response = grpcMemberClient.saveMember(req.id(), req.password(), req.name(), req.email(), req.phoneNumber(), MemberGradeDTO.valueOf(req.grade()));
-        MemberResponse memberResponse = GrpcMapper.INSTANCE.memberEntityToProto(response.getMember());
+        MemberResponse memberResponse = GrpcMapper.INSTANCE.makeMemberResponse(
+            response.getCode(),
+            response.getMessage(),
+            response.getResult().getMember()
+        );
         return ResponseEntity.ok(memberResponse);
     }
 
     @GetMapping("/getMember")
     public ResponseEntity<MemberResponse> getMember(@RequestParam String id) {
         GetMemberResponse response = grpcMemberClient.getMemberById(id);
-        MemberResponse memberResponse = GrpcMapper.INSTANCE.memberEntityToProto(response.getMember());
+        MemberResponse memberResponse = GrpcMapper.INSTANCE.makeMemberResponse(
+            response.getCode(),
+            response.getMessage(),
+            response.getResult().getMember()
+        );
         return ResponseEntity.ok(memberResponse);
     }
 
